@@ -3,12 +3,10 @@
   @desc
     Given a sorted linked list,
     delete all duplicates such that each element appear only once.
-
   @Note
     Given 1->1->2->3->3, return 1->2->3.
   @Link
     https://www.interviewbit.com/problems/remove-duplicates-from-sorted-list/
-
 */
 
 
@@ -31,22 +29,19 @@ ListNode* deleteDuplicates(ListNode* A) {
     if (!A)
         return A;
 
-    ListNode* tmp;
-    ListNode* before = A;
-    ListNode* after = before->next;
+    ListNode* current = A, *next;
 
-    while (after) {
-        if (before->val == after->val) {
-            tmp = after;
-            after = after->next;
-            before->next = after;
-            delete tmp;
-        } else {
-            before = after;
-            after = after->next;
-        }
+    while (current) {
+        next = current->next;
+        if (!next)
+            break;
+
+        if (current->val == next->val) {
+            current->next = next->next;
+            delete next;
+        } else
+            current = next;
     }
-
     return A;
 }
 
