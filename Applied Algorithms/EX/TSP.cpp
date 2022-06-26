@@ -1,57 +1,62 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-const int MAX = 100;
-const int INF = 4e8;
+const int N = 2e6;
+int S[30];
+int a[30][30];
+int n;
+bool visited[30];
+int totalCost = 0;
+int minCost = INT_MAX;
+int ans = INT_MAX;
+void input() {
+    int m;
+    scanf("%d%d", &n, &m);
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= n; j++)
+            a[i][j] = -1;
+    }
 
-int c[MAX][MAX];
-bool visited[MAX] = {};
-
-int cost; // cost so far
-int cmin; //the smallest cost among all the hops to be traversed
-int ans;
-
-// n: number of cities
-int m, n;
-
-
-void Try(int lastNode, int k) {
-
-    for (int v = 1; v <= n; v++) {
-        if (!visited[v] && cost + c[lastNode][v] + cmin * (n-k+1) < ans) {
-            visited[v] = true;
-            cost += c[lastNode][v];
-            if (k == n) {
-                    ans = min(ans, cost + c[v][1]);
-            } else {
-                Try(v, k + 1);
-            }
-
-            cost -= c[lastNode][v];
-            visited[v] = false;
-        }
+    while (m--) {
+        int u, v, c;
+        scanf("%d%d%d", &u, &v, &c);
+        a[u][v] = c;
+        minCost = min(a[u][v], minCost);
     }
 }
 
-int main() {
+bool check(int u, int k) {
+    if (visited[u]) return false;
+    if (a[S[k-1]][u] == -1) return false;
+    if (totalCost + a[S[k-1]][u] + (n-k+1) * minCost > ans) return false;
+    return true;
+}
 
-    cin >> n >> m;
+void Try(int k) {
+    for (int u = 2; u <= n; u++) {
+        if (check(u, k)) {
+            S[k] = u;
+            visited[u] = true;
+            totalCost += a[S[k-1]][u];
+            if (k == n) {
+                if (a[u][1] != -1) {
+                    ans = min(ans, totalCost + a[u][1]);
+                }
 
-    for (int i = 1; i <= n; i++)
-        for (int j = 1; j <= n; j++)
-            c[i][j] = INF;
+            } else {
+                Try(k + 1);
+            }
 
-    int u, v, c_uv;
-    cmin = INF;
-    for (int i = 1; i <= m; i++) {
-        cin >> u >> v >> c_uv;
-        c[u][v] = c_uv;
-        cmin = min(cmin, c_uv);
+            visited[u] = false;
+            totalCost -= a[S[k-1]][u];
+        }
     }
+}
+int main() {
+    input();
+    memset(visited, 0, sizeof(visited));
 
-    cost = 0;
-    ans = INF;
-    visited[1] = true;
-    Try(1, 2);
-    cout << ans << endl;
+    S[1] = 1;
+    Try(2);
+    cout << ans;
 }
