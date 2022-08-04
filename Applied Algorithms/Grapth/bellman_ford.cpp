@@ -23,7 +23,7 @@ void BellmanFord() {
 	fill_n(trace, n, -1);
 
 	d[s] = 0;
-	for (int i = 1; i < n; i++) {\
+	for (int i = 1; i < n; i++) {
 		for (auto e : edges) {
 			int u = e.u;
 			int v = e.v;
